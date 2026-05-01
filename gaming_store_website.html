@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pro Gaming Store</title>
+<style>
+body{margin:0;font-family:Arial;background:#0b1220;color:#fff}
+header{display:flex;justify-content:space-between;padding:15px;background:#020617}
+nav a{margin:0 10px;color:#fff;text-decoration:none}
+.container{padding:20px}
+.page{display:none}
+.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.card{background:#121a2b;padding:15px;border-radius:10px}
+button{padding:8px;margin:5px;border:none;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+<div>🎮 Gaming Store</div>
+<nav>
+<a href="#" onclick="nav('home')">Home</a>
+<a href="#" onclick="nav('products')">Products</a>
+<a href="#" onclick="nav('cart')">Cart</a>
+</nav>
+<div>📞 +91 820 854 9339</div>
+</header>
+
+<div class="container">
+
+<div id="home" class="page active">
+<h2>Categories</h2>
+<button onclick="filterCategory('PlayStation')">PlayStation</button>
+<button onclick="filterCategory('Xbox')">Xbox</button>
+<button onclick="filterCategory('PC')">PC</button>
+<button onclick="filterCategory('Accessories')">Accessories</button>
+
+<h2>Featured</h2>
+<div class="grid" id="featured"></div>
+</div>
+
+<div id="products" class="page">
+<h2>Products</h2>
+<div class="grid" id="productList"></div>
+</div>
+
+<div id="cart" class="page">
+<h2>Cart</h2>
+<div id="cartItems"></div>
+<h3 id="total"></h3>
+</div>
+
+<div id="details" class="page"></div>
+
+</div>
+
+<script>
+// LOCAL DATA (Fix for fetch error)
+let products=[
+
+// PlayStation
+{name:"PS5 Standard",price:50000,category:"PlayStation",spec:"825GB SSD, 16GB RAM"},
+{name:"PS5 Digital",price:45000,category:"PlayStation",spec:"825GB SSD, Digital"},
+{name:"PS4 Pro",price:30000,category:"PlayStation",spec:"1TB HDD"},
+{name:"PS4 Slim",price:25000,category:"PlayStation",spec:"500GB"},
+
+// Xbox
+{name:"Xbox Series X",price:52000,category:"Xbox",spec:"1TB SSD"},
+{name:"Xbox Series S",price:30000,category:"Xbox",spec:"512GB SSD"},
+{name:"Xbox One X",price:28000,category:"Xbox",spec:"1TB"},
+{name:"Xbox One S",price:22000,category:"Xbox",spec:"500GB"},
+
+// PC
+{name:"Gaming PC i5",price:60000,category:"PC",spec:"16GB RAM, 512GB SSD"},
+{name:"Gaming PC i7",price:90000,category:"PC",spec:"32GB RAM, RTX GPU"},
+{name:"Budget PC",price:40000,category:"PC",spec:"8GB RAM"},
+{name:"High-End PC",price:120000,category:"PC",spec:"RTX 4080"},
+
+// Accessories
+{name:"Gaming Keyboard",price:3000,category:"Accessories",spec:"RGB Mechanical"},
+{name:"Gaming Mouse",price:2000,category:"Accessories",spec:"High DPI"},
+{name:"Headset",price:4000,category:"Accessories",spec:"7.1 Surround"},
+{name:"Controller",price:5000,category:"Accessories",spec:"Wireless"}
+];
+
+let cart=[];
+
+function nav(p){
+document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+document.getElementById(p).classList.add('active');
+if(p==='home')loadFeatured();
+if(p==='cart')loadCart();
+}
+
+function loadFeatured(){
+render(products.slice(0,4),'featured');
+}
+
+function render(list,id='productList'){
+let h='';
+list.forEach((p,i)=>{
+h+=`<div class='card'>
+<h3>${p.name}</h3>
+<p>₹${p.price}</p>
+<button onclick="details(${i})">Product Details</button>
+<button onclick="addToCart(${i})">Add to Cart</button>
+</div>`;
+});
+document.getElementById(id).innerHTML=h;
+}
+
+function filterCategory(cat){
+let filtered=products.filter(p=>p.category===cat);
+render(filtered);
+nav('products');
+}
+
+function details(i){
+let p=products[i];
+nav('details');
+document.getElementById('details').innerHTML=`
+<h2>${p.name}</h2>
+<p>Price: ₹${p.price}</p>
+<p>${p.spec}</p>
+<button onclick="addToCart(${i})">Add to Cart</button>
+<button onclick="nav('products')">Back</button>`;
+}
+
+function addToCart(i){
+let item=cart.find(x=>x.name===products[i].name);
+if(item){item.qty++}else{cart.push({...products[i],qty:1});}
+alert('Added to cart');
+}
+
+function loadCart(){
+let total=0;let h='';
+cart.forEach(p=>{total+=p.price*p.qty;h+=`<p>${p.name} x${p.qty}</p>`});
+document.getElementById('cartItems').innerHTML=h;
+document.getElementById('total').innerText='Total ₹'+total;
+}
+
+loadFeatured();
+</script>
+
+</body>
+</html>
